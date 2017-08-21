@@ -70,7 +70,6 @@
 		<text id="popupboxvalue" stroke="none" stroke-width="0" text-anchor="start" x="5" y="40">0</text>
 	</g>
 
-	<script type="text/ecmascript" xlink:href="param.js"></script>
 	<script type="application/javascript" xlink:href="svidget.min.js"></script>
 	<script type="application/javascript" xlink:href="d3.min.js"></script>
 	<script type="application/javascript">
