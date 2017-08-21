@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script type="text/javascript" src="svidget.min.js"></script>
+        
+        <style>
+            .active{
+                transform: scale(1.2);
+                transition: all .5s ease-in-out;
+            }
+            .inactive{
+                transition: all .5s ease-in-out;
+            }
+            .container {
+                display: flex;
+            }
+            img{
+                width: 100px;
+                height: 100px;
+                border-radius: 50%;
+                border: 1px black solid;
+            }
+            ul{
+                padding: 10px;
+                list-style-type: none;
+            }
+            li{
+                margin: 10px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <ul>
+                <li id="banana" onmouseover="onHover()" onmouseout="onLeave()"><img id="banana" src="https://www.organicfacts.net/wp-content/uploads/2013/05/Banana3-1020x765.jpg" alt=""></li>
+                <li id="apple" onmouseover="onHover()" onmouseout="onLeave()"><img id="apple" src="http://bestapples.com/wp-content/uploads/2015/10/apple-varieties.jpg" alt=""></li>
+                <li id="cherry" onmouseover="onHover()" onmouseout="onLeave()"><img id="cherry" src="http://cheryusa.com/cherry.jpg" alt=""></li>
+            </ul>
+            <div id="widgetContainer" width="400" height="400">
+            </div>
+            <ul>
+                <li id="orange" onmouseover="onHover()" onmouseout="onLeave()"><img id="orange" src="https://mlpforums.com/uploads/post_images/img-3003706-2-orange-trans-back__86293_zoom.jpg" alt=""></li>
+                <li id="grape" onmouseover="onHover()" onmouseout="onLeave()"><img id="grape" src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/bb/Table_grapes_on_white.jpg/220px-Table_grapes_on_white.jpg" alt=""></li>
+            </ul>
+        </div>
+    </body>
+    
+    <script type="text/javascript">
+        var previous;
+
+        var data = [["banana",90],["apple",6],["cherry",2],["orange",10],["grape",3.5]];
+        var sum;
+
+        function getSum(data){
+            var sum = 0;
+			for (var i=0; i<data.length; i++) {
+				sum += data[i][1];
+			}
+			return sum;
+        }
+
+        function getValue(data, string){
+            var value;
+            for (var i=0; i<data.length; i++) {
+				if(data[i][0] === string){
+                    return data[i][1];
+                }
+			}
+        }
+
+        function getPerct(value, sum){
+            return (Math.round((value / sum) * 1000) / 10.0) + "%"
+        }
+
+        svidget.load("#widgetContainer", { url: "donutchart.svg", id: "hwWidget", width: 300, height: 300, crossdomain: true }, { 
+            data: data, 
+            colors: ["#008000"],
+            size: 30,
+            showAnimation: false,
+            innerLabelType: "none",
+            labelType: "none"
+        });
+
+        svidget.onwidgetload(handleWidgetLoaded);
+
+        function handleWidgetLoaded(e){
+            var w = svidget.widget(e.value);
+
+            w.event("sliceSelect").ontrigger(handleSelect);
+            w.event("sliceOut").ontrigger(handleOut);
+
+            sum = getSum(data);
+        }
+
+        function handleSelect(e){
+            document.getElementById(e.value.name).className = "active";
+        }
+
+        function handleOut(e){
+            document.getElementById(e.value.name).className = "inactive";
+        }
+
+        function onHover(){
+            var slices = $("#hwWidget_frame").contents().find("g.slice");
+            $("#hwWidget_frame").contents().find("#textLabel").text(getPerct(getValue(data, event.target.id), sum));
+            document.getElementById(event.target.id).className = "active";
+            slices.addClass("nonhover");
+            slices.removeClass("hover");
+            $("#hwWidget_frame").contents().find("#" + event.target.id + "-path").parent().addClass("hover");
+        }
+
+        function onLeave(){
+            var slices = $("#hwWidget_frame").contents().find("g.slice");
+            $("#hwWidget_frame").contents().find("#textLabel").text("");
+            document.getElementById(event.target.id).className = "inactive";
+            slices.addClass("hover");
+            slices.removeClass("nonhover");
+        }
+    </script>
+</html>
